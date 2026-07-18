@@ -713,7 +713,8 @@ class DateTimeParser:
                 # day not given, default to 1
                 _day = 1
 
-            date_string = f"{year}-{week}-{_day}"
+            # %G/%V need zero-padded year/week; int() alone drops leading zeros.
+            date_string = f"{year:04d}-{week:02d}-{_day}"
 
             #  tokens for ISO 8601 weekdates
             dt = datetime.strptime(date_string, "%G-%V-%u")
@@ -750,7 +751,7 @@ class DateTimeParser:
                     "Month component is not allowed with the DDD and DDDD tokens."
                 )
 
-            date_string = f"{_year}-{day_of_year}"
+            date_string = f"{_year:04d}-{int(day_of_year):03d}"
             try:
                 dt = datetime.strptime(date_string, "%Y-%j")
             except ValueError:

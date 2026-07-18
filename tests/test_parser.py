@@ -542,6 +542,10 @@ class TestDateTimeParserParse:
 
         assert self.parser.parse("1998-006", "YYYY-DDDD") == datetime(1998, 1, 6)
 
+        # Years before 1000 need zero-padded %Y for strptime
+        assert self.parser.parse("0001-001", "YYYY-DDDD") == datetime(1, 1, 1)
+        assert self.parser.parse("0999-365", "YYYY-DDDD") == datetime(999, 12, 31)
+
         with pytest.raises(ParserError):
             self.parser.parse("1998-456", "YYYY-DDDD")
 
@@ -736,6 +740,10 @@ class TestDateTimeParserParse:
         assert self.parser.parse("2011W054T141701", "WTHHmmss") == datetime(
             2011, 2, 3, 14, 17, 1
         )
+        # Years before 1000 need zero-padded %G for strptime
+        assert self.parser.parse("0001-W01-1", "W") == datetime(1, 1, 1)
+        assert self.parser.parse("0999-W01-1", "W") == datetime(998, 12, 31)
+        assert arrow.get("0001-W01-1") == arrow.Arrow(1, 1, 1, tzinfo=timezone.utc)
 
         bad_formats = [
             "201W22",
